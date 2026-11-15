@@ -133,6 +133,23 @@ for t in B["tramos"]:  # la capa vial trae tramos repetidos (misma geometría y 
         _vistos.add(k); _unicos.append(t)
 print("calles: tramos duplicados quitados:", len(B["tramos"]) - len(_unicos))
 B["tramos"] = _unicos
+# la capa vial perdió Ñ, º y tildes al exportarse («?»): corrección explícita, no «?»→Ñ a ciegas («1? DE MAYO» es 1º, «Col?n» es Colón)
+ARREGLOS_CALLE = [("MONSE?OR", "MONSEÑOR"), ("RODRUGUEZ", "RODRIGUEZ"), ("CEBZCICH", "CEDZICH"), ("1?.", "1º"), ("1?", "1º"), ("N? 7", "Nº 7"),
+                  ("FARI?A", "FARIÑA"), ("CA?ADON", "CAÑADON"), ("CA?ADA", "CAÑADA"), ("CHAQUE?O", "CHAQUEÑO"), ("?ACUNDAY", "ÑACUNDAY"),
+                  ("?ANDUTI", "ÑANDUTI"), ("ARGA?A", "ARGAÑA"), ("NI?O", "NIÑO"), ("RUBIO ?U", "RUBIO ÑU"), ("NU?EZ", "NUÑEZ"),
+                  ("CAACUPEM?", "CAACUPEMÍ"), ("Ben?tez", "Benítez"), ("Col?n", "Colón"), ("Jos?", "José"), ("Ram?n", "Ramón")]
+
+
+def nombre_calle(n):
+    for a, b in ARREGLOS_CALLE:
+        n = n.replace(a, b)
+    return n
+
+
+for t in B["tramos"]:
+    if t["nombre"]:
+        t["nombre"] = nombre_calle(t["nombre"])
+assert not any("?" in (t["nombre"] or "") for t in B["tramos"]), "quedan nombres de calle con «?»"
 KM = lambda clase: round(sum(t["km"] for t in B["tramos"] if t["clase"] == clase), 1)
 N_ = lambda clase: sum(1 for t in B["tramos"] if t["clase"] == clase)
 guardar_capa("calles", [feat({"type": "MultiLineString", "coordinates": t["geom"]}, nombre=t["nombre"] or None,
@@ -296,7 +313,10 @@ PROB = [
      "intervenciones": ["zonificación: la planicie como parque", "alerta anual de construcción nueva por satélite"]},
     {"id": "P3", "problema": "Baches y calles intransitables después de lluvias fuertes", "sector": "movilidad e infraestructura",
      "geom": {"type": "MultiLineString", "coordinates": [ln for g in alto for ln in g]},
-     "indicadores": {"tramos_alto": N_("alto"), "km_alto": KM("alto"), "tramos_medio": N_("medio"), "km_medio": KM("medio"), "vias_principales_km_alto": dict(B["top"][:8]),
+     "indicadores": {"tramos_alto": N_("alto"), "km_alto": KM("alto"), "tramos_medio": N_("medio"), "km_medio": KM("medio"), "vias_principales_km_alto": dict(sorted(((n, round(sum(t["km"] for t in B["tramos"] if t["clase"] == "alto" and t["nombre"] == n), 2))
+                                                          for n in {t["nombre"] for t in B["tramos"] if t["clase"] == "alto" and t["nombre"]
+                                                                    and t["nombre"].strip().upper() != "S/N"}),  # sin nombre no es una vía principal
+                                                         key=lambda kv: -kv[1])[:8]),
                      "dias_50mm_tendencia_p": 0.3021},
      "evidencia": ["calles", "cauces", "tendencias"], "confianza": "[SOSPECHOSO - REQUIERE VALIDACIÓN] modelo sin reportes de baches",
      "causas": ["escurrimiento que cruza la calzada", "tránsito pesado", "calles de tierra sobre cauces", "falta de desagües"],
