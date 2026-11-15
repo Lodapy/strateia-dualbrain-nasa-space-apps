@@ -1,15 +1,15 @@
 {
  "resumen": {
   "base": "cde_ia.sqlite",
-  "tablas_auditadas": 47,
-  "filas_con_etiqueta": 135296,
+  "tablas_auditadas": 45,
+  "filas_con_etiqueta": 116080,
   "pct_filas_por_confianza": {
-   "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 79.1,
-   "[CONFIRMADO CON EVIDENCIA]": 20.7,
+   "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 75.9,
+   "[CONFIRMADO CON EVIDENCIA]": 24.0,
    "[INCIERTO]": 0.2
   },
-  "cruces_ok": 10,
-  "cruces_total": 10,
+  "cruces_ok": 8,
+  "cruces_total": 8,
   "hallazgos_por_gravedad": {}
  },
  "cruces": {
@@ -18,8 +18,6 @@
   "quemas_por_anio suma = focos": true,
   "quemas_por_barrio suma = focos": true,
   "quemas_dia_noche suma = focos": true,
-  "calles alto = 757 tramos (sin duplicados de la capa vial)": true,
-  "problemas P3 coincide con calles": true,
   "tendencias n = filas en series_anuales": true,
   "eventos: 8 hitos de la crecida": true,
   "crecida: edificios crecen con la cota": true
@@ -100,16 +98,6 @@
   },
   "barrios_osm": {
    "filas": 98,
-   "confianza_pct": {
-    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 100.0
-   },
-   "tiene_fuente": true,
-   "columnas_mas_50pct_vacias": {},
-   "pct_fuera_de_cde": 0.0,
-   "duplicados": 0
-  },
-  "calles": {
-   "filas": 19029,
    "confianza_pct": {
     "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 100.0
    },
@@ -256,16 +244,6 @@
    },
    "tiene_fuente": true,
    "columnas_mas_50pct_vacias": {},
-   "duplicados": 0
-  },
-  "hidrografia_oficial": {
-   "filas": 187,
-   "confianza_pct": {
-    "[CONFIRMADO CON EVIDENCIA]": 100.0
-   },
-   "tiene_fuente": false,
-   "columnas_mas_50pct_vacias": {},
-   "pct_fuera_de_cde": 0.0,
    "duplicados": 0
   },
   "no2_diario_cde": {
