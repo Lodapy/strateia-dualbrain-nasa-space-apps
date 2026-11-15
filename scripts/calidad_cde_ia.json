@@ -1,0 +1,496 @@
+{
+ "resumen": {
+  "base": "cde_ia.sqlite",
+  "tablas_auditadas": 47,
+  "filas_con_etiqueta": 135296,
+  "pct_filas_por_confianza": {
+   "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 79.1,
+   "[CONFIRMADO CON EVIDENCIA]": 20.7,
+   "[INCIERTO]": 0.2
+  },
+  "cruces_ok": 10,
+  "cruces_total": 10,
+  "hallazgos_por_gravedad": {}
+ },
+ "cruces": {
+  "edificios bajo 121,19 m = 356": true,
+  "quemas_por_mes suma = focos": true,
+  "quemas_por_anio suma = focos": true,
+  "quemas_por_barrio suma = focos": true,
+  "quemas_dia_noche suma = focos": true,
+  "calles alto = 757 tramos (sin duplicados de la capa vial)": true,
+  "problemas P3 coincide con calles": true,
+  "tendencias n = filas en series_anuales": true,
+  "eventos: 8 hitos de la crecida": true,
+  "crecida: edificios crecen con la cota": true
+ },
+ "hallazgos": [],
+ "tablas": {
+  "aerosoles_diarios_cde": {
+   "filas": 30,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "agua_anual": {
+   "filas": 8332,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 83.0,
+    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 17.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 1.8,
+   "duplicados": 0
+  },
+  "agua_anual_sentinel2_ha": {
+   "filas": 18,
+   "confianza_pct": {
+    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "agua_radar_20261015": {
+   "filas": 20,
+   "confianza_pct": {
+    "[INCIERTO]": 55.0,
+    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 45.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 0.0,
+   "duplicados": 0
+  },
+  "aire_actual": {
+   "filas": 8,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "aire_anual": {
+   "filas": 26,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": false,
+   "columnas_mas_50pct_vacias": {
+    "co_cde_mol_m2": 69.2,
+    "no2_cde_media": 69.2,
+    "dias_humo_ai_mayor_1": 69.2,
+    "dias_estancados": 69.2
+   },
+   "duplicados": 0
+  },
+  "aire_diario": {
+   "filas": 2873,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": false,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "barrios_osm": {
+   "filas": 98,
+   "confianza_pct": {
+    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 0.0,
+   "duplicados": 0
+  },
+  "calles": {
+   "filas": 19029,
+   "confianza_pct": {
+    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 0.0,
+   "duplicados": 0
+  },
+  "calor_verano": {
+   "filas": 3,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 0.0,
+   "duplicados": 0
+  },
+  "cauces": {
+   "filas": 14897,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 0.0,
+   "duplicados": 0
+  },
+  "cobertura": {
+   "filas": 261,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 0.0,
+   "duplicados": 0
+  },
+  "conocimiento_cde": {
+   "filas": 57,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 8.8,
+    "[INCIERTO]": 42.1,
+    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 49.1
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "cotas_referencia": {
+   "filas": 4,
+   "confianza_pct": {
+    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "crecida_rio": {
+   "filas": 6,
+   "confianza_pct": {
+    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 0.0,
+   "duplicados": 0
+  },
+  "edificios": {
+   "filas": 86229,
+   "confianza_pct": {
+    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {
+    "cota_alcance_msnm": 99.2
+   },
+   "pct_fuera_de_cde": 0.0,
+   "duplicados": 0
+  },
+  "estancamiento_aire": {
+   "filas": 29,
+   "confianza_pct": {
+    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "eventos_crecida_2026": {
+   "filas": 8,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 75.0,
+    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 25.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "focos_calor_region": {
+   "filas": 22,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 100.0,
+   "duplicados": 0
+  },
+  "focos_historicos_cde": {
+   "filas": 1474,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 0.0,
+   "duplicados": 0
+  },
+  "fuentes": {
+   "filas": 16,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": false,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "grafo_aristas": {
+   "filas": 40,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 15.0,
+    "[INCIERTO]": 72.5,
+    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 12.5
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "grafo_nodos": {
+   "filas": 36,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "hidrografia_oficial": {
+   "filas": 187,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": false,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 0.0,
+   "duplicados": 0
+  },
+  "no2_diario_cde": {
+   "filas": 29,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": false,
+   "columnas_mas_50pct_vacias": {
+    "no2": 55.2
+   },
+   "duplicados": 0
+  },
+  "no2_ultimos_30_dias": {
+   "filas": 48,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 0.0,
+   "duplicados": 0
+  },
+  "pasadas_copernicus": {
+   "filas": 9,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {
+    "nubes_pct": 66.7
+   },
+   "duplicados": 0
+  },
+  "problemas": {
+   "filas": 9,
+   "confianza_pct": {
+    "curada por problema (texto con una o más etiquetas)": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 0.0,
+   "duplicados": 0
+  },
+  "quemas_dia_noche": {
+   "filas": 2,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "quemas_fechas_pico": {
+   "filas": 15,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "quemas_por_anio": {
+   "filas": 15,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "quemas_por_barrio": {
+   "filas": 53,
+   "confianza_pct": {
+    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "quemas_por_dia_semana": {
+   "filas": 7,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "quemas_por_mes": {
+   "filas": 12,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "relacion_oni": {
+   "filas": 9,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 22.2,
+    "[INCIERTO]": 77.8
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "serie_sentinel1": {
+   "filas": 183,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 91.8,
+    "[INCIERTO]": 8.2
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "serie_sentinel2": {
+   "filas": 168,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 60.1,
+    "[INCIERTO]": 39.9
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "series_anuales": {
+   "filas": 405,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "sitios_quema_persistente": {
+   "filas": 95,
+   "confianza_pct": {
+    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 0.0,
+   "duplicados": 0
+  },
+  "tareas_propuestas": {
+   "filas": 24,
+   "confianza_pct": {
+    "[INCIERTO]": 100.0
+   },
+   "tiene_fuente": false,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "tendencias": {
+   "filas": 14,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 78.6,
+    "[INCIERTO]": 21.4
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "turbidez_anual": {
+   "filas": 26,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "turbidez_por_barrio": {
+   "filas": 58,
+   "confianza_pct": {
+    "[SOSPECHOSO - REQUIERE VALIDACIÓN]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "turbidez_temporada_seca": {
+   "filas": 408,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 95.1,
+    "[INCIERTO]": 4.9
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 0.0,
+   "duplicados": 0
+  },
+  "validacion_crecida_barrios": {
+   "filas": 9,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 66.7,
+    "[INCIERTO]": 33.3
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "duplicados": 0
+  },
+  "valle": {
+   "filas": 1,
+   "confianza_pct": {
+    "[INCIERTO]": 100.0
+   },
+   "tiene_fuente": true,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 0.0,
+   "duplicados": 0
+  },
+  "zonas_analisis": {
+   "filas": 3,
+   "confianza_pct": {
+    "[CONFIRMADO CON EVIDENCIA]": 66.7,
+    "[INCIERTO]": 33.3
+   },
+   "tiene_fuente": false,
+   "columnas_mas_50pct_vacias": {},
+   "pct_fuera_de_cde": 33.3,
+   "duplicados": 0
+  }
+ }
+}
