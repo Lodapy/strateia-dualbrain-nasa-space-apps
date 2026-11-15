@@ -9,7 +9,7 @@ Each row carries `fuente` (source), `calidad` (quality note) and `confianza` (co
 | `[SOSPECHOSO - REQUIERE VALIDACIÓN]` | Suspect – needs validation (modelled, unofficial or partially checked) |
 | `[INCIERTO]` | Uncertain (hypothesis or proposal, not data) |
 
-Helper tables: `_diccionario_tablas` / `_diccionario_columnas` (dictionary, Spanish), `_guia_consultas` (26 example questions with SQL), `_acerca`, `_limites`, `_calidad_tablas` and `_calidad_resumen` (audit: 10/10 cross-checks).
+Helper tables: `_diccionario_tablas` / `_diccionario_columnas` (dictionary, Spanish), `_guia_consultas` (24 example questions with SQL), `_acerca`, `_limites`, `_calidad_tablas` and `_calidad_resumen` (audit of this public copy: 8/8 cross-checks).
 
 | Table | Kind | Rows | Confidence | Description |
 |---|---|---|---|---|
@@ -21,7 +21,6 @@ Helper tables: `_diccionario_tablas` / `_diccionario_columnas` (dictionary, Span
 | `aire_anual` | table | 26 | CONFIRMED WITH EVIDENCE | Yearly air indicators (MODIS MAIAC aerosol optical depth), 2001–2026. |
 | `aire_diario` | table | 2873 | CONFIRMED WITH EVIDENCE | Daily NO2 (Sentinel-5P), aerosols, wind and rain for the city, 2019–2026. |
 | `barrios_osm` | layer | 98 | SUSPECT – NEEDS VALIDATION | Neighbourhoods of Ciudad del Este with name and boundary (OpenStreetMap, not official). |
-| `calles` | layer | 19029 | SUSPECT – NEEDS VALIDATION | Street segments (~95 m each, not whole streets) with modelled pothole risk from rainfall runoff. |
 | `calor_verano` | layer | 3 | CONFIRMED WITH EVIDENCE | Hottest land-surface zones in summer (Landsat 8/9, Dec–Feb 2023–2026). Ground and roofs, not air. |
 | `cauces` | layer | 14897 | CONFIRMED WITH EVIDENCE | Rain-runoff flow lines with drained area (D8 on NASADEM 30 m). Built drains not included. |
 | `cobertura` | layer | 261 | CONFIRMED WITH EVIDENCE | Built-up and tree-covered zones (ESA WorldCover 2021). |
@@ -36,7 +35,6 @@ Helper tables: `_diccionario_tablas` / `_diccionario_columnas` (dictionary, Span
 | `fuentes` | table | 16 | CONFIRMED WITH EVIDENCE | Catalogue of data sources with provider, resolution, period and access. |
 | `grafo_aristas` | table | 40 | CONFIRMED WITH EVIDENCE | Causal graph edges (cause → effect) with status: proven correlation, documentary evidence, model or hypothesis. |
 | `grafo_nodos` | table | 36 | CONFIRMED WITH EVIDENCE | Causal graph nodes. |
-| `hidrografia_oficial` | layer | 187 | CONFIRMED WITH EVIDENCE | Official named rivers and streams (Paraná, Acaray, Monday, …). The Acaraymí stream is not mapped. |
 | `no2_diario_cde` | table | 29 | CONFIRMED WITH EVIDENCE | Daily tropospheric NO2 over the city (Sentinel-5P), last month. |
 | `no2_ultimos_30_dias` | layer | 48 | CONFIRMED WITH EVIDENCE | NO2 per ~3.5 km pixel, last month (zones, not streets). For the city mean use aire_actual. |
 | `pasadas_copernicus` | table | 9 | CONFIRMED WITH EVIDENCE | Recent Copernicus overpass metadata (Sentinel-1/2/5P). |

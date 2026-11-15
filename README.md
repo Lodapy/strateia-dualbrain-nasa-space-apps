@@ -32,7 +32,7 @@ Other verified results:
 
 | Path | Content |
 |---|---|
-| `data/cde_ia.sqlite` | Curated database: 47 tables, 135,296 confidence-labelled rows. SHA-256 in `data/SHA256SUMS`. |
+| `data/cde_ia.sqlite` | Curated database (public copy): 45 tables, 116,080 confidence-labelled rows. SHA-256 in `data/SHA256SUMS`. |
 | `data/DATA_DICTIONARY.md` | Every table in English, with rows and confidence. Cell contents are in Spanish. |
 | `scripts/` | Build, audit and query scripts (Python 3.12, comments in Spanish). `insumos/` holds the intermediate Earth Engine results. |
 | `DATA_SOURCES.md` | Every dataset with provider and licence. |
@@ -42,12 +42,12 @@ Quick check with Python only (no extra packages):
 ```bash
 sha256sum -c data/SHA256SUMS
 python -c "import sqlite3; c=sqlite3.connect('data/cde_ia.sqlite'); print(c.execute('SELECT COUNT(*) FROM edificios WHERE cota_alcance_msnm <= 121.19').fetchone())"   # 356
-python scripts/auditar_ia.py data/cde_ia.sqlite   # quality audit: 10/10 cross-checks
+python scripts/auditar_ia.py data/cde_ia.sqlite   # quality audit: 8/8 cross-checks
 ```
 
-The table `_guia_consultas` has 26 example questions with their SQL. The audit results are in `_calidad_resumen`.
+The table `_guia_consultas` has 24 example questions with their SQL. The audit results are in `_calidad_resumen`.
 
-Rebuilding the database from scratch also needs the building layer with heights and the twin-app data, which are not in this repository (see “Pre-existing components”).
+Two tables are left out of this public copy because their licence is not confirmed: the municipal street layer and the official hydrography (see `DATA_SOURCES.md`); `scripts/publicar_base.py` makes this copy. Rebuilding the database from scratch also needs the building layer with heights and the twin-app data, which are not in this repository (see “Pre-existing components”).
 
 ## How the AI answers
 

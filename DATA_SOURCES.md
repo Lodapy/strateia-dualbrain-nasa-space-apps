@@ -29,9 +29,9 @@ All data was accessed in November 2026. Most satellite processing used Google Ea
 | NOAA CPC ONI | El Niño index | Public domain |
 | Press reports citing SEN, Itaipú and the municipality (QZ, Hoy, EFE) | October 2026 flood events and affected families | Facts cited with source in each row |
 
-## To confirm before public release
+## Not included in the public copy (licence not confirmed)
 
 | Table | Origin | Status |
 |---|---|---|
-| `calles` | Municipal street layer, origin to be confirmed | Licence not confirmed |
-| `hidrografia_oficial` | Official hydrography layer from a QGIS project | Licence not confirmed |
+| `calles` | Municipal street layer, origin to be confirmed | Removed |
+| `hidrografia_oficial` | Official hydrography layer from a QGIS project | Removed |

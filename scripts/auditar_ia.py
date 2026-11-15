@@ -88,8 +88,6 @@ cruces = {
     "quemas_por_anio suma = focos": q("SELECT SUM(focos) FROM quemas_por_anio")[0][0] == focos,
     "quemas_por_barrio suma = focos": q("SELECT SUM(focos) FROM quemas_por_barrio")[0][0] == focos,
     "quemas_dia_noche suma = focos": q("SELECT SUM(focos) FROM quemas_dia_noche")[0][0] == focos,
-    "calles alto = 757 tramos (sin duplicados de la capa vial)": q("SELECT COUNT(*) FROM calles WHERE riesgo_baches = 'alto'")[0][0] == 757,
-    "problemas P3 coincide con calles": str(q("SELECT COUNT(*) FROM calles WHERE riesgo_baches = 'alto'")[0][0]) in q("SELECT indicadores FROM problemas WHERE id = 'P3'")[0][0],
     "tendencias n = filas en series_anuales": all(
         q("SELECT COUNT(*) FROM series_anuales WHERE variable = ? AND region = ?", (v, rg))[0][0] == nn
         for v, rg, nn in q("SELECT variable, region, n FROM tendencias")),
@@ -97,6 +95,9 @@ cruces = {
     "crecida: edificios crecen con la cota": [r[0] for r in q("SELECT edificios_alcanzados FROM crecida_rio ORDER BY cota_msnm")] ==
                                             sorted(r[0] for r in q("SELECT edificios_alcanzados FROM crecida_rio")),
 }
+if q("SELECT COUNT(*) FROM sqlite_master WHERE name = 'calles'")[0][0]:  # la copia pública no trae calles (licencia sin confirmar)
+    cruces["calles alto = 757 tramos (sin duplicados de la capa vial)"] = q("SELECT COUNT(*) FROM calles WHERE riesgo_baches = 'alto'")[0][0] == 757
+    cruces["problemas P3 coincide con calles"] = str(q("SELECT COUNT(*) FROM calles WHERE riesgo_baches = 'alto'")[0][0]) in q("SELECT indicadores FROM problemas WHERE id = 'P3'")[0][0]
 for k, ok in cruces.items():
     if not ok:
         hallazgos.append(("crítico", "cruce", f"no se cumple: {k}"))
