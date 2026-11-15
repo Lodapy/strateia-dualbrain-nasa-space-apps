@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Consulta la base cde_gemelo.gpkg sin GDAL (solo librería estándar; Python 3.8+), pensado para el Jetson Orin.
+"""Queries the cde_gemelo.gpkg database without GDAL (standard library only; Python 3.8+), meant for the Jetson Orin.
 
-Uso:
-  python3 consultar.py capas                 # capas y tablas con su cantidad de filas
-  python3 consultar.py problemas             # registro de problemas (id, confianza, indicadores)
-  python3 consultar.py contexto              # contexto compacto para el LLM (JSON)
-  python3 consultar.py sql "SELECT ..."      # consulta de atributos (las geometrías vienen como BLOB GeoPackage)
-  python3 consultar.py caja lon lat [radio_m] # elementos de cada capa cuya caja toca un punto (índice R-tree)
+Usage:
+  python3 consultar.py capas                 # layers and tables with their row counts
+  python3 consultar.py problemas             # problems register (id, confidence, indicators)
+  python3 consultar.py contexto              # compact context for the LLM (JSON)
+  python3 consultar.py sql "SELECT ..."      # attribute query (geometries come as GeoPackage BLOBs)
+  python3 consultar.py caja lon lat [radio_m] # features of each layer whose box touches a point (R-tree index)
 """
 import json
 import math
@@ -44,12 +44,12 @@ def caja(con, lon, lat, radio_m=150.0):
         n = con.execute('SELECT COUNT(*) FROM "{}" WHERE maxx >= ? AND minx <= ? AND maxy >= ? AND miny <= ?'.format(t),
                         (lon - dlon, lon + dlon, lat - dlat, lat + dlat)).fetchone()[0]
         if n:
-            print("{:<22} {:>6} elementos en {:.0f} m".format(capa, n, radio_m))
+            print("{:<22} {:>6} features within {:.0f} m".format(capa, n, radio_m))
 
 
 def main():
     if not DB.exists():
-        sys.exit("No encuentro {}".format(DB))
+        sys.exit("Cannot find {}".format(DB))
     con = conectar()
     orden = sys.argv[1] if len(sys.argv) > 1 else "capas"
     if orden == "capas":

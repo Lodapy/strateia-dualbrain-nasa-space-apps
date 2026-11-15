@@ -1,4 +1,4 @@
-"""Carga capas/*.geojson y tablas/*.json en cde_gemelo.gpkg (GeoPackage = SQLite). Correr con el Python de QGIS:
+"""Loads capas/*.geojson and tablas/*.json into cde_gemelo.gpkg (GeoPackage = SQLite). Run with the QGIS Python:
 "C:\\Program Files\\QGIS 3.44.15\\bin\\python-qgis-ltr.bat" cargar_gpkg.py
 """
 import json
@@ -14,14 +14,14 @@ if GPKG.exists():
 for i, capa in enumerate(sorted((D / "capas").glob("*.geojson"))):
     gdal.VectorTranslate(str(GPKG), str(capa), format="GPKG", layerName=capa.stem, accessMode=None if i == 0 else "update",
                          dstSRS="EPSG:4326", geometryType="PROMOTE_TO_MULTI", layerCreationOptions=["SPATIAL_INDEX=YES"])
-    print("capa", capa.stem)
+    print("layer", capa.stem)
 ds = ogr.Open(str(GPKG), 1)
 for tabla in sorted((D / "tablas").glob("*.json")):
     filas = json.load(open(tabla, encoding="utf-8"))
-    if isinstance(filas, dict):  # p. ej. no2_diario_cde.json: resumen + «serie»
+    if isinstance(filas, dict):  # e.g. no2_diario_cde.json: summary + "serie"
         filas = filas.get("serie", [])
     if not filas or not isinstance(filas[0], dict):
-        print("tabla omitida (sin filas):", tabla.stem)
+        print("table skipped (no rows):", tabla.stem)
         continue
     lyr = ds.CreateLayer(tabla.stem, geom_type=ogr.wkbNone)
     campos = list(dict.fromkeys(k for f in filas for k in f))
@@ -36,6 +36,6 @@ for tabla in sorted((D / "tablas").glob("*.json")):
             if v is not None:
                 ft.SetField(c, json.dumps(v, ensure_ascii=False) if isinstance(v, (list, dict, bool)) else v)
         lyr.CreateFeature(ft)
-    print("tabla", tabla.stem, len(filas))
+    print("table", tabla.stem, len(filas))
 ds = None
-print("GeoPackage listo:", GPKG, GPKG.stat().st_size // 1024, "KB")
+print("GeoPackage ready:", GPKG, GPKG.stat().st_size // 1024, "KB")

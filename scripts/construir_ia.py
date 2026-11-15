@@ -1,7 +1,7 @@
-"""Versión para IA de la base curada: cde_ia.sqlite (tablas planas + diccionario + calidad + guía de consultas).
-Pensada para el chat de StrateIA Dual Brain (node servidor.js cde_ia.sqlite) y cualquier LLM que lea el esquema y haga SELECT.
-Sin geometrías binarias: cada elemento lleva lon/lat de su centro; las capas chicas llevan además su GeoJSON para dibujar.
-Uso: python construir_ia.py  (Python 3.12, shapely)."""
+"""AI version of the curated database: cde_ia.sqlite (flat tables + dictionary + quality + query guide).
+Meant for the StrateIA Dual Brain chat (node servidor.js cde_ia.sqlite) and any LLM that reads the schema and runs SELECT.
+No binary geometries: each feature carries the lon/lat of its centre; small layers also carry their GeoJSON for drawing.
+Usage: python construir_ia.py  (Python 3.12, shapely)."""
 import json
 import sqlite3
 from pathlib import Path
@@ -11,14 +11,14 @@ from shapely.geometry import shape
 import sys
 
 D = Path(__file__).parent
-SAL = D / (sys.argv[1] if len(sys.argv) > 1 else "cde_ia.sqlite")  # otro nombre si la base está abierta por el chat
+SAL = D / (sys.argv[1] if len(sys.argv) > 1 else "cde_ia.sqlite")  # alternative name if the database is open in the chat
 if SAL.exists():
     SAL.unlink()
 con = sqlite3.connect(SAL)
 
-TABLAS = {  # tabla: (descripción, fuente, período, resolución, calidad)
+TABLAS = {  # table: (description, source, period, resolution, quality)
     "edificios": ("Cada edificio de Ciudad del Este con su altura, barrio, cota del río que lo alcanza, calor del suelo y año de aparición. «Construcción nueva» = anio_aparicion entre 2018 y 2023; 2016 es la línea de base de Open Buildings Temporal (ya existía), no un año de construcción.", "OSM + Google Open Buildings; NASADEM; Landsat", "base 2026; aparición 2016–2023", "edificio", "los edificios alcanzados por la crecida NO dependen de la altura: dependen de cota_alcance_msnm (terreno NASADEM, modelo que subestima familias); altura = estimación satelital, null = sin dato"),
-    "calles": ("Tramos de calle (cada fila es un tramo de ~95 m, no una calle entera: decir «tramos», no «calles») con superficie, tipo, barrio y riesgo de baches por lluvia.", "capa vial municipal (origen a confirmar); NASADEM", "s/d", "tramo", "riesgo modelado, no baches observados"),
+    "calles": ("Tramos de calle (cada fila es un tramo de ~95 m, no una calle entera: decir «tramos», no «calles») con superficie, tipo, barrio y riesgo de baches por lluvia. «Vías principales» (indicador de P3) = las calles con nombre que suman más km de riesgo alto, de cualquier tipo (avenida, ruta o calle urbana), sin los tramos «S/N»; para avenidas y rutas solamente, filtrar por tipo.", "capa vial municipal (origen a confirmar); NASADEM", "s/d", "tramo", "riesgo modelado, no baches observados"),
     "cauces": ("Líneas por donde corre el agua de lluvia, con el área que drena.", "NASA NASADEM 30 m", "2000", "30 m", "no incluye desagües construidos"),
     "crecida_rio": ("Mancha de crecida del río Paraná para cada cota del río.", "NASADEM; JRC", "modelo", "30 m", "modelo sin defensas; subestima familias"),
     "valle": ("Valle bajo de arroyo con su modelo de anegamiento por lluvia.", "NASADEM ∩ Copernicus GLO-30", "modelo", "30 m", "susceptibilidad, no observado"),
@@ -58,9 +58,9 @@ COLUMNAS = {
 CHICAS = {"crecida_rio", "valle", "calor_verano", "zonas_analisis", "problemas", "barrios_osm", "no2_ultimos_30_dias", "sitios_quema_persistente", "agua_radar_20261015"}
 
 
-# Nivel de confianza (protocolo anti-sesgo del dueño: tres categorías, sin puntajes numéricos)
+# Confidence level (owner's anti-bias protocol: three categories, no numeric scores)
 CONF, SOSP, INC = "[CONFIRMADO CON EVIDENCIA]", "[SOSPECHOSO - REQUIERE VALIDACIÓN]", "[INCIERTO]"
-CONF_TABLA = {  # tabla: (nivel, motivo)
+CONF_TABLA = {  # table: (level, reason)
     "edificios": (SOSP, "huella de OSM; altura estimada por satélite; cota_alcance_msnm es un modelo de terreno que subestima familias (el conteo por crecida no usa la altura)"),
     "calles": (SOSP, "riesgo de baches modelado, sin reportes municipales"), "cauces": (CONF, "derivado del terreno NASADEM; no incluye desagües"),
     "crecida_rio": (SOSP, "modelo sin defensas ni drenaje; el evento de 2026 sí ocurrió"), "valle": (INC, "susceptibilidad topográfica; el radar no lo vio inundado"),
@@ -89,7 +89,7 @@ CONF_TABLA = {  # tabla: (nivel, motivo)
 
 
 def conf_fila(tabla, p):
-    """Confianza por fila donde varía dentro de la tabla; si no, la de la tabla."""
+    """Per-row confidence where it varies within the table; otherwise the table's own."""
     if tabla == "tendencias":
         return CONF if p.get("significativa_95") else INC
     if tabla == "relacion_oni":
@@ -119,16 +119,16 @@ def tipo(v):
 def cargar(nombre, filas):
     if not filas:
         return
-    if nombre not in ("problemas", "conocimiento_cde", "cotas_referencia", "validacion_crecida_barrios"):  # estas traen su confianza curada
+    if nombre not in ("problemas", "conocimiento_cde", "cotas_referencia", "validacion_crecida_barrios"):  # these carry their own curated confidence
         for f in filas:
             f["confianza"] = conf_fila(nombre, f)
     vistos, unicas = set(), []
-    for f in filas:  # quita filas repetidas en el origen (misma información salvo fila_id)
+    for f in filas:  # drop rows repeated in the source (same data except fila_id)
         k = json.dumps({a: b for a, b in f.items() if a != "fila_id"}, sort_keys=True, ensure_ascii=False, default=str)
         if k not in vistos:
             vistos.add(k); unicas.append(f)
     if len(unicas) < len(filas):
-        print(f"  {nombre}: {len(filas) - len(unicas)} filas duplicadas quitadas")
+        print(f"  {nombre}: {len(filas) - len(unicas)} duplicate rows removed")
     filas[:] = unicas
     cols = list(dict.fromkeys(k for f in filas for k in f))
     muestra = {c: next((f[c] for f in filas if f.get(c) is not None), "") for c in cols}
@@ -138,7 +138,7 @@ def cargar(nombre, filas):
     return cols
 
 
-registro, geometrias = [], []  # las geometrías van aparte: el esquema que ve el LLM no debe mostrar polígonos como «valores»
+registro, geometrias = [], []  # geometries go separately: the schema the LLM sees must not show polygons as "values"
 for capa in sorted((D / "capas").glob("*.geojson")):
     fc = json.load(open(capa, encoding="utf-8"))
     filas = []
@@ -152,7 +152,7 @@ for capa in sorted((D / "capas").glob("*.geojson")):
         filas.append(p)
     cols = cargar(capa.stem, filas)
     registro.append((capa.stem, "capa", len(filas), cols))
-    print("capa", capa.stem, len(filas))
+    print("layer", capa.stem, len(filas))
 for t in sorted((D / "tablas").glob("*.json")):
     filas = json.load(open(t, encoding="utf-8"))
     if isinstance(filas, dict):
@@ -160,12 +160,12 @@ for t in sorted((D / "tablas").glob("*.json")):
     if filas and isinstance(filas[0], dict):
         cols = cargar(t.stem, filas)
         registro.append((t.stem, "tabla", len(filas), cols))
-        print("tabla", t.stem, len(filas))
+        print("table", t.stem, len(filas))
 
 con.execute("CREATE TABLE _geometrias (tabla TEXT, fila_id INTEGER, geojson TEXT)")
 con.executemany("INSERT INTO _geometrias VALUES (?,?,?)", geometrias)
 def periodo_real(n, cols):
-    """Período que cubren los datos de la tabla, leído de su columna anio o fecha (para que el modelo no busque fuera de rango)."""
+    """Period covered by the table's data, read from its anio or fecha column (so the model does not search out of range)."""
     for c in ("anio", "fecha"):
         if c in (cols or []):
             a, b = con.execute(f'SELECT MIN("{c}"), MAX("{c}") FROM "{n}"').fetchone()
@@ -203,7 +203,7 @@ con.executemany("INSERT INTO _guia_consultas VALUES (?,?,?)", [
     ("¿Cómo varió el humo y el NO₂ por año?", "SELECT anio, dias_humo_ai_mayor_1, no2_cde_media, aod_cde FROM aire_anual WHERE anio >= 2019 ORDER BY anio", "línea doble"),
     ("¿Cuánta agua vio el radar en 2026?", "SELECT fecha, agua_ha FROM serie_sentinel1 WHERE zona='ribera_valle_parana' AND usar=1 AND fecha >= '2026' ORDER BY fecha", "línea"),
     ("¿Qué problemas tiene la ciudad y qué tan seguros estamos?", "SELECT id, problema, confianza FROM problemas ORDER BY id", "tabla"),
-    # Preguntas que fallaban en el chat (informe del chat, 2026-11-15)
+    # Questions that failed in the chat (chat report, 2026-11-15)
     ("¿Cuánta agua hubo en Ciudad del Este en un año entre 1990 y 2021? (sumar permanente + estacional de UNA región; no sumar regiones)",
      "SELECT anio, region, SUM(valor) AS agua_total_ha, MIN(confianza) AS confianza FROM series_anuales WHERE variable IN ('Permanent surface water','Seasonal surface water') "
      "AND region = 'Whole city box' AND anio = 2015 GROUP BY anio, region", "número"),
@@ -234,7 +234,7 @@ con.executemany("INSERT INTO _guia_consultas VALUES (?,?,?)", [
     ("¿Cómo varió el NO₂ día a día? (2019–2026)",
      "SELECT fecha, no2, viento_ms, confianza FROM aire_diario WHERE no2 IS NOT NULL AND fecha >= '2026-10-01' ORDER BY fecha", "línea"),
 ])
-con.execute("CREATE TABLE _acerca (tema TEXT, texto TEXT)")  # lo primero que lee el LLM: de qué trata toda la base
+con.execute("CREATE TABLE _acerca (tema TEXT, texto TEXT)")  # the first thing the LLM reads: what the whole database is about
 con.executemany("INSERT INTO _acerca VALUES (?,?)", [
     ("área", "Toda la base es de Ciudad del Este (Alto Paraná, Paraguay), frontera con Foz do Iguaçu (Brasil) y Puerto Iguazú (Argentina), sobre el río Paraná. "
              "Caja de la ciudad: lon −54,740 a −54,594; lat −25,600 a −25,387. Salvo que una columna zona o region diga otra cosa (ribera, región de 130 km, "
@@ -261,4 +261,4 @@ con.executemany("INSERT INTO _limites VALUES (?,?)", [
 con.commit()
 con.execute("VACUUM")
 con.close()
-print("cde_ia.sqlite listo:", SAL.stat().st_size // 1024, "KB ·", len(registro), "tablas + 4 de diccionario/guía")
+print("cde_ia.sqlite ready:", SAL.stat().st_size // 1024, "KB ·", len(registro), "tables + 4 of dictionary/guide")

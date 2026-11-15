@@ -1,8 +1,8 @@
-"""Base cartográfica curada de Ciudad del Este para IA (StrateIA Dual Brain): capas GeoJSON + tablas, todas con fuente, fecha y calidad.
+"""Curated cartographic database of Ciudad del Este for AI (StrateIA Dual Brain): GeoJSON layers + tables, all with source, date and quality.
 
-Uso: python construir_base.py   (Python 3.12 con shapely y numpy). Después: cargar_gpkg.py con el Python de QGIS.
-Entradas: insumos/ (resultados intermedios de Earth Engine y análisis), edificios con altura (CDE_EDIFICIOS) y datos del gemelo (CDE_GEMELO).
-Salida: capas/*.geojson y tablas/*.json. EPSG:4326. Nada se imputa: si un dato falta, el campo queda null y se dice en «calidad».
+Usage: python construir_base.py   (Python 3.12 with shapely and numpy). Then: cargar_gpkg.py with the QGIS Python.
+Inputs: insumos/ (intermediate Earth Engine and analysis results), buildings with height (CDE_EDIFICIOS) and twin data (CDE_GEMELO).
+Output: capas/*.geojson and tablas/*.json. EPSG:4326. Nothing is imputed: if a value is missing the field stays null and it is stated in «calidad».
 """
 import heapq
 import json
@@ -17,7 +17,7 @@ from shapely.ops import unary_union
 
 OUT = Path(__file__).parent
 SC = Path(os.getenv("CDE_INSUMOS", OUT / "insumos"))
-M3D = Path(os.getenv("CDE_EDIFICIOS", OUT / "edificios"))  # salida/edificios_cde_altura.geojson y salida/construcciones_por_anio.json
+M3D = Path(os.getenv("CDE_EDIFICIOS", OUT / "edificios"))  # salida/edificios_cde_altura.geojson and salida/construcciones_por_anio.json
 GEMELO = Path(os.getenv("CDE_GEMELO", OUT.parent.parent / "stratos-gemelo-cde"))
 (OUT / "capas").mkdir(exist_ok=True)
 (OUT / "tablas").mkdir(exist_ok=True)
@@ -28,12 +28,12 @@ cargar = lambda p: json.load(open(p, encoding="utf-8"))
 def guardar_capa(nombre, feats):
     json.dump({"type": "FeatureCollection", "name": nombre, "features": feats}, open(OUT / "capas" / f"{nombre}.geojson", "w", encoding="utf-8"),
               ensure_ascii=False, separators=(",", ":"))
-    print(f"capa {nombre}: {len(feats)} elementos", flush=True)
+    print(f"layer {nombre}: {len(feats)} features", flush=True)
 
 
 def guardar_tabla(nombre, filas):
     json.dump(filas, open(OUT / "tablas" / f"{nombre}.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print(f"tabla {nombre}: {len(filas)} filas", flush=True)
+    print(f"table {nombre}: {len(filas)} rows", flush=True)
 
 
 def feat(geom, **props):
@@ -42,7 +42,7 @@ def feat(geom, **props):
 
 rect = lambda w, s, e, n: {"type": "Polygon", "coordinates": [[[w, s], [e, s], [e, n], [w, n], [w, s]]]}
 
-# ---------- grilla NASADEM de la ciudad (30 m) y crecida conectada ----------
+# ---------- city NASADEM grid (30 m) and connected flood ----------
 dem = cargar(SC / "dem_ciudad.json")
 E = np.array(dem["elev"], float); E[E < -9000] = np.nan
 R, C = E.shape
@@ -53,9 +53,9 @@ cre = cargar(SC / "crecida_ciudad.json")
 cota_celda = {}
 for k in sorted(cre["niveles"], key=float, reverse=True):
     for i, j in cre["niveles"][k]["celdas"]:
-        cota_celda[(i, j)] = float(k)  # queda la cota más baja que alcanza la celda
+        cota_celda[(i, j)] = float(k)  # keeps the lowest stage that reaches the cell
 
-# ---------- 1 · crecida del río por cota ----------
+# ---------- 1 · river flood by stage ----------
 crec = []
 for k in sorted(cre["niveles"], key=float):
     nv = cre["niveles"][k]
@@ -66,7 +66,7 @@ for k in sorted(cre["niveles"], key=float):
                      calidad="modelo; subestima familias (asentamientos informales fuera del mapa, edificios multifamiliares)"))
 guardar_capa("crecida_rio", crec)
 
-# ---------- barrios (OpenStreetMap, nombres normalizados) para filtrar sin librerías geográficas en el servidor ----------
+# ---------- neighbourhoods (OpenStreetMap, normalised names) to filter without geo libraries on the server ----------
 import re
 from shapely.geometry import Point, shape
 from shapely.strtree import STRtree
@@ -83,7 +83,7 @@ def barrio_de(lon, lat):
     return next((BARRIOS[i][0] for i in ARB_B.query(p) if BARRIOS[i][1].contains(p)), None)
 
 
-# ---------- 2 · edificios con cota de alcance, calor y año de aparición ----------
+# ---------- 2 · buildings with reach stage, heat and year of appearance ----------
 lst = cargar(SC / "lst_cde.json")
 LT = np.array(lst["lst_c"], float); LT[LT < -9000] = np.nan
 lw, ls_, le, ln_ = lst["bbox"]; lR, lC = LT.shape
@@ -105,7 +105,7 @@ for f in cargar(M3D / "salida" / "edificios_cde_altura.geojson")["features"]:
                     calidad="altura null = sin dato (no imputada); anio_aparicion = primer año en Open Buildings Temporal (2016–2023)"))
 guardar_capa("edificios", eds)
 
-# ---------- 2b · validación del modelo de crecida contra los barrios afectados (registro oficial, QZ 18/10/2026) ----------
+# ---------- 2b · validation of the flood model against the affected neighbourhoods (official register, QZ 18/10/2026) ----------
 AFECTADOS = [("San Rafael y San Agustín", ("San Rafael", "San Agustín", "San Agustin"), 380), ("Ex Cantera", ("Cantera",), 260),
              ("Remansito", ("Remansito",), 155), ("Che la Reina", ("Reina",), 130), ("Belén (asentamiento)", ("Belén", "Belen"), 100),
              ("Santa Ana", ("Santa Ana",), 80), ("Km 9 Monday y 8 de Diciembre", ("Kilómetro 9", "Km 9", "8 De Diciembre"), 70),
@@ -124,16 +124,16 @@ guardar_tabla("validacion_crecida_barrios", val)
 captados = sum(1 for v in val if v["resultado"] == "el modelo lo capta")
 comparables = sum(1 for v in val if v["barrios_osm"])
 
-# ---------- 3 · calles con riesgo de baches ----------
+# ---------- 3 · streets with pothole risk ----------
 B = cargar(SC / "baches.json")
 _vistos, _unicos = set(), []
-for t in B["tramos"]:  # la capa vial trae tramos repetidos (misma geometría y atributos): se cuentan una vez
+for t in B["tramos"]:  # the road layer has repeated segments (same geometry and attributes): counted once
     k = json.dumps(t, sort_keys=True, ensure_ascii=False)
     if k not in _vistos:
         _vistos.add(k); _unicos.append(t)
-print("calles: tramos duplicados quitados:", len(B["tramos"]) - len(_unicos))
+print("streets: duplicate segments removed:", len(B["tramos"]) - len(_unicos))
 B["tramos"] = _unicos
-# la capa vial perdió Ñ, º y tildes al exportarse («?»): corrección explícita, no «?»→Ñ a ciegas («1? DE MAYO» es 1º, «Col?n» es Colón)
+# the road layer lost Ñ, º and accents on export («?»): explicit fix, not «?»→Ñ blindly («1? DE MAYO» is 1º, «Col?n» is Colón)
 ARREGLOS_CALLE = [("MONSE?OR", "MONSEÑOR"), ("RODRUGUEZ", "RODRIGUEZ"), ("CEBZCICH", "CEDZICH"), ("1?.", "1º"), ("1?", "1º"), ("N? 7", "Nº 7"),
                   ("FARI?A", "FARIÑA"), ("CA?ADON", "CAÑADON"), ("CA?ADA", "CAÑADA"), ("CHAQUE?O", "CHAQUEÑO"), ("?ACUNDAY", "ÑACUNDAY"),
                   ("?ANDUTI", "ÑANDUTI"), ("ARGA?A", "ARGAÑA"), ("NI?O", "NIÑO"), ("RUBIO ?U", "RUBIO ÑU"), ("NU?EZ", "NUÑEZ"),
@@ -141,7 +141,7 @@ ARREGLOS_CALLE = [("MONSE?OR", "MONSEÑOR"), ("RODRUGUEZ", "RODRIGUEZ"), ("CEBZC
 
 
 def nombre_calle(n):
-    if n.strip().upper() == "S/N":  # «s/n» y «S/N» son lo mismo: sin nombre
+    if n.strip().upper() == "S/N":  # «s/n» and «S/N» are the same: no name
         return "S/N"
     for a, b in ARREGLOS_CALLE:
         n = n.replace(a, b)
@@ -151,7 +151,7 @@ def nombre_calle(n):
 for t in B["tramos"]:
     if t["nombre"]:
         t["nombre"] = nombre_calle(t["nombre"])
-assert not any("?" in (t["nombre"] or "") for t in B["tramos"]), "quedan nombres de calle con «?»"
+assert not any("?" in (t["nombre"] or "") for t in B["tramos"]), "street names with «?» remain"
 KM = lambda clase: round(sum(t["km"] for t in B["tramos"] if t["clase"] == clase), 1)
 N_ = lambda clase: sum(1 for t in B["tramos"] if t["clase"] == clase)
 guardar_capa("calles", [feat({"type": "MultiLineString", "coordinates": t["geom"]}, nombre=t["nombre"] or None,
@@ -160,7 +160,7 @@ guardar_capa("calles", [feat({"type": "MultiLineString", "coordinates": t["geom"
                              fuente="capa vial vias.geojson (proyecto TwinDigitalGobernance; origen a confirmar); drenaje NASADEM",
                              calidad="riesgo modelado, no baches observados; validar con reportes municipales") for t in B["tramos"]])
 
-# ---------- 4 · cauces (drenaje D8 sobre NASADEM con pozos rellenados) ----------
+# ---------- 4 · channels (D8 drainage over NASADEM with sinks filled) ----------
 Ef = np.where(np.isnan(E), np.nanmax(E) + 100, E).copy()
 hecho = np.zeros((R, C), bool); cola = []
 for i in range(R):
@@ -193,7 +193,7 @@ guardar_capa("cauces", [feat({"type": "LineString", "coordinates": [centro(i, j)
                              fuente="NASA NASADEM 30 m; relleno priority-flood + D8", calidad="derivado del terreno; no incluye desagües construidos")
                         for (i, j), (a, b) in dest.items() if acc[i, j] * ha_celda >= 20])
 
-# ---------- 5 · valle, agua observada, calor, cobertura, zonas de análisis ----------
+# ---------- 5 · valley, observed water, heat, land cover, analysis zones ----------
 v = next(z for z in cargar(GEMELO / "web" / "public" / "data" / "zonas.json")["zonas"] if z["id"] == "valle")
 hip = dict((round(e - v["fondo"]["elev_m"]), a) for e, a in v["hipsometria"])
 geo_valle = {"type": "Polygon", "coordinates": [v["poligono"] + v["poligono"][:1]]}
@@ -226,7 +226,7 @@ guardar_capa("zonas_analisis", [
     feat(rect(W, S, Ea, N), zona="caja_ciudad", uso="agua, luz nocturna y población de toda la ciudad"),
     feat(rect(-54.6875, -25.75, -54.0625, -25.25), zona="celda_power_aprox", uso="lluvia NASA POWER (celda MERRA-2 aproximada, sin verificar)")])
 
-# ---------- 6 · tablas ----------
+# ---------- 6 · tables ----------
 T = cargar(SC / "tendencias.json")
 guardar_tabla("tendencias", [{k: v_[k] for k in ("variable", "region", "unidad", "fuente", "definicion", "n", "sen_por_decada", "sen_ic95_decada", "mk_p",
                                                  "ols_por_decada", "ols_ic95_decada", "ols_p", "r2", "significativa_95", "direccion")} for v_ in T["tendencias"]])
@@ -260,7 +260,7 @@ guardar_tabla("fuentes", [
     {"dato": "Capa vial vias.geojson", "proveedor": "proyecto TwinDigitalGobernance", "resolucion": "vector", "periodo": "s/d", "acceso": "archivo local", "licencia": "origen a confirmar"},
     {"dato": "Evacuados octubre 2026", "proveedor": "SEN, Municipalidad, Itaipú vía prensa", "resolucion": "por barrio", "periodo": "13–18/10/2026", "acceso": "notas de prensa", "licencia": "cita"}])
 
-# ---------- 6b · series Copernicus (Sentinel-1, Sentinel-2, Sentinel-5P) ----------
+# ---------- 6b · Copernicus series (Sentinel-1, Sentinel-2, Sentinel-5P) ----------
 import csv
 SER = GEMELO / "export" / "series"
 leer_csv = lambda n: list(csv.DictReader(open(SER / n, encoding="utf-8")))
@@ -287,7 +287,7 @@ guardar_tabla("pasadas_copernicus", [{"coleccion": col, "producto_id": x["id"], 
                                       "calidad": "solo metadatos de pasadas; Sentinel-5P NO₂ NRTI sin medición usada"}
                                      for col, lista in (snap["copernicus"]["datos"] or {}).items() for x in lista])
 
-# ---------- 7 · registro de problemas (curado) ----------
+# ---------- 7 · problems register (curated) ----------
 geo_crecida = next(f for f in crec if f["properties"]["cota_msnm"] == 121.19)["geometry"]
 alto = [t["geom"] for t in B["tramos"] if t["clase"] == "alto"]
 nuevos = sum(nuevos_riesgo.values())
@@ -317,7 +317,7 @@ PROB = [
      "geom": {"type": "MultiLineString", "coordinates": [ln for g in alto for ln in g]},
      "indicadores": {"tramos_alto": N_("alto"), "km_alto": KM("alto"), "tramos_medio": N_("medio"), "km_medio": KM("medio"), "vias_principales_km_alto": dict(sorted(((n, round(sum(t["km"] for t in B["tramos"] if t["clase"] == "alto" and t["nombre"] == n), 2))
                                                           for n in {t["nombre"] for t in B["tramos"] if t["clase"] == "alto" and t["nombre"]
-                                                                    and t["nombre"].strip().upper() != "S/N"}),  # sin nombre no es una vía principal
+                                                                    and t["nombre"].strip().upper() != "S/N"}),  # unnamed is not a main road
                                                          key=lambda kv: -kv[1])[:8]),
                      "dias_50mm_tendencia_p": 0.3021},
      "evidencia": ["calles", "cauces", "tendencias"], "confianza": "[SOSPECHOSO - REQUIERE VALIDACIÓN] modelo sin reportes de baches",
@@ -370,7 +370,7 @@ if (OUT / "tablas" / "quemas_por_barrio.json").exists():
 guardar_capa("problemas", [feat(p["geom"], **{k: (json.dumps(x, ensure_ascii=False) if isinstance(x, (dict, list)) else x) for k, x in p.items() if k != "geom"})
                            for p in PROB])
 
-# ---------- 7b · base de conocimientos del dueño (2026-11-15): cotas locales, afirmaciones verificadas y tareas propuestas ----------
+# ---------- 7b · owner's knowledge base (2026-11-15): local stages, verified claims and proposed tasks ----------
 DOC = "documento «Base de Conocimientos: CDE Smart Digital Twin City» del dueño (2026-11-15), sin citas"
 C_, S_, I_ = "[CONFIRMADO CON EVIDENCIA]", "[SOSPECHOSO - REQUIERE VALIDACIÓN]", "[INCIERTO]"
 guardar_tabla("cotas_referencia", [
@@ -504,11 +504,11 @@ guardar_tabla("tareas_propuestas", [
     {"id": "T24", "tarea": "Pérdida de bosque y biomasa por cuenca (Paraná, Monday, Acaraymí) con GEDI L4A/L4B más Landsat o Sentinel-2", "capa_ooda": "orientar", "estado": "propuesto",
      "dato_que_falta": "límites de cuenca y trazado del Acaraymí", "como_se_valida": "comparar con la cobertura ESA WorldCover de la base"}])
 
-# ---------- 8 · grafo causal ----------
+# ---------- 8 · causal graph ----------
 NODOS = ["El Niño (ONI)", "lluvia en la cuenca", "operación de Itaipú", "nivel del Paraná", "mancha de crecida", "edificios expuestos", "familias evacuadas",
          "lluvia fuerte local", "escurrimiento en cauces", "baches", "crecimiento urbano", "pérdida de árboles", "isla de calor", "agua estancada", "dengue",
          "bajante", "incendios", "construcción en zona de crecida",
-         # documento «Flujograma lógico y grafo causal» y anexo «BIDARA y misiones NASA» del dueño (2026-11-15)
+         # owner's «Flujograma lógico y grafo causal» document and «BIDARA y misiones NASA» annex (2026-11-15)
          "apertura del vertedero de Itaipú", "remanso del arroyo Acaraymí", "inundación de San Rafael y Che la Reina",
          "falta de recolección de basura", "quema de basura", "diseño vial obsoleto", "tráfico stop-and-go", "NO₂ y hollín",
          "inversión térmica en el valle", "smog", "costos de salud (VSL)", "migración transfronteriza e inversión inmobiliaria",
@@ -555,11 +555,11 @@ ARISTAS = [
     ("volumen entrante al Paraná (PINN)", "nivel del Paraná", "hipótesis", "requiere caudales de Itaipú"),
     ("suelo saturado (SMAP)", "escurrimiento en cauces", "hipótesis (propuesta SMAP)", "SMAP no está cargado (T10); píxel de 9 km"),
     ("suelo saturado (SMAP)", "deslizamientos en el Acaraymí", "hipótesis", "sin registros de deslizamientos")]
-assert all(a in NODOS and b in NODOS for a, b, _, _ in ARISTAS), "arista con nodo inexistente"
+assert all(a in NODOS and b in NODOS for a, b, _, _ in ARISTAS), "edge with a nonexistent node"
 guardar_tabla("grafo_nodos", [{"id": i + 1, "nodo": n_} for i, n_ in enumerate(NODOS)])
 guardar_tabla("grafo_aristas", [{"desde": a, "hacia": b, "estado": e_, "evidencia": ev} for a, b, e_, ev in ARISTAS])
 
-# ---------- 9 · contexto compacto para el chat de StrateIA Dual Brain ----------
+# ---------- 9 · compact context for the StrateIA Dual Brain chat ----------
 ctx = {"ciudad": "Ciudad del Este, Paraguay", "fecha": HOY, "crs": "EPSG:4326",
        "capas": sorted(p.stem for p in (OUT / "capas").glob("*.geojson")),
        "problemas": [{k: p[k] for k in ("id", "problema", "sector", "indicadores", "confianza", "causas", "datos_faltantes", "intervenciones", "evidencia")} for p in PROB],
@@ -569,4 +569,4 @@ ctx = {"ciudad": "Ciudad del Este, Paraguay", "fecha": HOY, "crs": "EPSG:4326",
        "limites": ["los satélites no ven personas, nacionalidad ni seguridad", "la lluvia POWER es modelo (~0,5°)", "el agua 2022–2026 usa otro método",
                    "el riesgo de baches es modelado", "no hay casos de dengue"]}
 json.dump(ctx, open(OUT / "contexto_dualbrain.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-print("contexto_dualbrain.json ·", len(json.dumps(ctx, ensure_ascii=False)) // 1024, "KB · edificios nuevos bajo 121:", nuevos, dict(sorted(nuevos_riesgo.items())))
+print("contexto_dualbrain.json ·", len(json.dumps(ctx, ensure_ascii=False)) // 1024, "KB · new buildings below 121:", nuevos, dict(sorted(nuevos_riesgo.items())))

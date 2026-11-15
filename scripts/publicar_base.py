@@ -1,6 +1,6 @@
-"""Arma la copia pública de la base para el repo de la entrega: quita las tablas sin licencia confirmada
-(calles, hidrografia_oficial) y sus filas en el diccionario, la guía, las geometrías y la auditoría.
-Uso: python publicar_base.py <origen.sqlite> <destino.sqlite>   y después: python auditar_ia.py <destino> --escribir"""
+"""Builds the public copy of the database for the submission repo: removes the tables without a confirmed licence
+(calles, hidrografia_oficial) and their rows in the dictionary, guide, geometries and audit.
+Usage: python publicar_base.py <origen.sqlite> <destino.sqlite>   and then: python auditar_ia.py <destino> --escribir"""
 import shutil
 import sqlite3
 import sys
@@ -14,7 +14,7 @@ for t in SIN_LICENCIA:
     for aux in ("_diccionario_tablas", "_diccionario_columnas", "_geometrias", "_calidad_tablas"):
         c.execute(f"DELETE FROM {aux} WHERE tabla = ?", (t,))
     c.execute("DELETE FROM _guia_consultas WHERE sql LIKE ?", (f"%{t}%",))
-# metadatos de uso de IA exigidos por las reglas SI de Space Apps
+# AI-use metadata required by the Space Apps SI rules
 USO_IA = ("Uso de IA (SI) / AI use (SI): los scripts que arman esta base se escribieron con ayuda de Claude Code (Anthropic), "
           "bajo revisión humana; cada cifra se recalcula desde los datos fuente. Las respuestas del chat las genera un modelo local "
           "(Qwen3.5-35B-A3B) a partir de consultas SQL. / The scripts that build this database were written with the help of "
@@ -26,4 +26,4 @@ c.commit()
 c.execute("VACUUM")
 quedan = c.execute("SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name NOT LIKE '\\_%' ESCAPE '\\'").fetchone()[0]
 guia = c.execute("SELECT COUNT(*) FROM _guia_consultas").fetchone()[0]
-print(f"copia pública: {quedan} tablas · guía {guia} consultas · sin {', '.join(SIN_LICENCIA)}")
+print(f"public copy: {quedan} tables · guide {guia} queries · without {', '.join(SIN_LICENCIA)}")
