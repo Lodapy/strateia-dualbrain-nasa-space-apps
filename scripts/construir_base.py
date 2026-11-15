@@ -141,6 +141,8 @@ ARREGLOS_CALLE = [("MONSE?OR", "MONSEÑOR"), ("RODRUGUEZ", "RODRIGUEZ"), ("CEBZC
 
 
 def nombre_calle(n):
+    if n.strip().upper() == "S/N":  # «s/n» y «S/N» son lo mismo: sin nombre
+        return "S/N"
     for a, b in ARREGLOS_CALLE:
         n = n.replace(a, b)
     return n
