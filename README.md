@@ -1,6 +1,6 @@
 # StrateIA Dual Brain · NASA Space Apps 2026
 
-**Smart City Decision Intelligence for Ciudad del Este, Paraguay · Challenge: “Be An Earth System Trend Detective!”**
+**Smart City Intelligence Decision for Ciudad del Este, Paraguay · Challenge: “Be An Earth System Trend Detective!”**
 
 ▶ **Demo video (30 s, 4K):** [`media/strateia-dualbrain-30s.mp4`](media/strateia-dualbrain-30s.mp4)
 
@@ -14,7 +14,7 @@ Every row carries its source, a quality note and a confidence label. The AI does
 |---|---|---|
 | **1. Curated database** | 45 tables (public copy), 116,080 rows, each with source, quality note and confidence label: water, rain, heat, air, fires, flood stages, buildings, trends, 9 city problems and 24 proposed tasks. | `data/cde_ia.sqlite`, built by `scripts/` |
 | **2. Dual Brain chat** | Answers questions in English or Spanish: picks the tables, writes SQL, quotes the number with its source and confidence. Runs offline on an NVIDIA Jetson AGX Orin. | Local service (not in this repository) |
-| **3. City Case Decision Intelligence** | For each city problem, lays out the evidence in six stages — case, entities, events, telemetry, analysis, closure — and ends in a proposed decision. Every node states which database field it comes from. | Local web app (not in this repository) |
+| **3. City Case Intelligence Decision** | For each city problem, lays out the evidence in six stages — case, entities, events, telemetry, analysis, closure — and ends in a proposed decision. Every node states which database field it comes from. | Local web app (not in this repository) |
 | **4. Satellites over the city** | A 3D model of Ciudad del Este with the satellites we use and what each one detects, each labelled with its confidence. | Shown in the demo video |
 
 The chat and the web app read this same database. Their code lives in the team's private repository; everything a judge needs to check the figures is here.
@@ -94,7 +94,7 @@ Other verified results:
 | `data/DATA_DICTIONARY.md` | Every table in English, with rows and confidence. Cell contents are in Spanish. |
 | `scripts/` | Build, audit and query scripts (Python 3.12, comments and messages in English). `insumos/` holds the intermediate Earth Engine results. |
 | `DATA_SOURCES.md` | Every dataset with provider and licence. |
-| `media/strateia-dualbrain-30s.mp4` | 30-second demo video (4K): satellites over the city and City Case Decision Intelligence. The narration is an AI-generated voice (Qwen3-TTS cloned from the team owner's own voice, with consent) and the satellites are an AI-generated illustration; both are labelled on screen and in the metadata. |
+| `media/strateia-dualbrain-30s.mp4` | 30-second demo video (4K): satellites over the city and City Case Intelligence Decision. The narration is an AI-generated voice (Qwen3-TTS cloned from the team owner's own voice, with consent) and the satellites are an AI-generated illustration; both are labelled on screen and in the metadata. |
 
 **Language:** code comments and docs are in English; database identifiers and cell contents are in Spanish (the local municipal language), fully explained in `data/DATA_DICTIONARY.md`.
 
