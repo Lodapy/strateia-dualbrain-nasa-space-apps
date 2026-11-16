@@ -36,7 +36,7 @@ Other verified results:
 | `data/DATA_DICTIONARY.md` | Every table in English, with rows and confidence. Cell contents are in Spanish. |
 | `scripts/` | Build, audit and query scripts (Python 3.12, comments and messages in English). `insumos/` holds the intermediate Earth Engine results. |
 | `DATA_SOURCES.md` | Every dataset with provider and licence. |
-| `media/strateia-dualbrain-30s.mp4` | 30-second demo video (City Case Decision Intelligence, case P3). The narration is an AI-generated voice (Qwen3-TTS from the team owner's own voice, with consent). |
+| `media/strateia-dualbrain-30s.mp4` | 30-second demo video (4K): satellites over the city and City Case Decision Intelligence. The narration is an AI-generated voice (Qwen3-TTS cloned from the team owner's own voice, with consent) and the satellites are an AI-generated illustration; both are labelled on screen and in the metadata. |
 
 **Language:** code comments and docs are in English; database identifiers and cell contents are in Spanish (the local municipal language), fully explained in `data/DATA_DICTIONARY.md`.
 
