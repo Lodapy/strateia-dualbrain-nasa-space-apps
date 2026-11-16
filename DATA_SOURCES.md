@@ -12,6 +12,7 @@ All data was accessed in November 2026. Most satellite processing used Google Ea
 | NASA NASADEM 30 m | Terrain, flood stages, runoff lines | NASA open data |
 | NASA MODIS MAIAC MCD19A2 | Aerosol optical depth, dry-season turbidity | NASA open data |
 | Landsat Collection 2 Surface Temperature (USGS/NASA) | Summer land-surface temperature, heat island | Public domain |
+| NASA GPM IMERG V07 | Rainfall on the day of the October 2026 flood (one value, not a series) | NASA open data |
 
 ## Space Agency Partner and other data
 
